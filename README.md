@@ -1,22 +1,25 @@
 # Loan Application System
 
-## Set up PostgreSQL and pgAdmin (no Docker)
+## Set up PostgreSQL and pgAdmin
 
-Install PostgreSQL 16 and pgAdmin 4 for Windows. During PostgreSQL installation, create or configure a database login with username `loans` and password `loans`, and ensure the PostgreSQL service is running on port `5432`.
+Install PostgreSQL 16 and pgAdmin 4 for Windows, and ensure the PostgreSQL service is running on port `5432`. The settings in `backend/src/main/resources/application.yml` connect to:
 
-In pgAdmin, create the `loans` database owned by the `loans` login, then register/connect to the server using:
+- Host and port: `localhost:5432`
+- Database: `personal-loan-v2`
+- Username: `postgres`
+- Password: your local PostgreSQL password
 
-- Host: `localhost`
-- Port: `5432`
-- Maintenance database: `postgres`
-- Username: `loans`
-- Password: `loans`
+In pgAdmin, create the `personal-loan-v2` database owned by `postgres` if it does not already exist. The backend listens on port `8080`. Flyway creates the schema automatically when the backend starts; use the `dev` profile to load the fictional demo users and applications.
 
-The backend connects to `jdbc:postgresql://localhost:5432/loans`. Flyway creates the schema automatically when the backend starts. Start with the `dev` profile to load the fictional demo users and applications.
+Set your own PostgreSQL password in the environment before starting the backend. This overrides the local default in `application.yml` and should not be committed or shared:
+
+```powershell
+$env:SPRING_DATASOURCE_PASSWORD = "<your-local-postgres-password>"
+```
 
 ## Reset database
 
-To reset the schema and demo data, drop and recreate the `loans` database in pgAdmin, then restart the backend with the `dev` profile. Flyway applies the migrations and seed data on startup. The optional `scripts/reset-db.sh` uses local PostgreSQL command-line tools (`dropdb` and `createdb`); run it in Git Bash or WSL with the PostgreSQL admin credentials configured (by default, `PGUSER=postgres`). The `loans` login must exist and own the recreated database.
+To reset the schema and demo data, drop and recreate the `personal-loan-v2` database in pgAdmin, then restart the backend with the `dev` profile. Flyway reapplies the migrations and seed data on startup. Note: `scripts/reset-db.sh` currently resets a separate `loans` database owned by `loans`; it does not reset the database configured in `application.yml`.
 
 ## Run backend
 
